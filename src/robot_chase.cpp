@@ -31,8 +31,6 @@ class RobotChase : public rclcpp::Node {
         RCLCPP_INFO(this->get_logger(), "Robot Chase node started");
         RCLCPP_INFO(this->get_logger(), "  kp_distance: %.2f", kp_distance_);
         RCLCPP_INFO(this->get_logger(), "  kp_yaw: %.2f", kp_yaw_);
-        RCLCPP_INFO(this->get_logger(), "  max_linear_velocity: %.2f m/s", max_linear_velocity_);
-        RCLCPP_INFO(this->get_logger(), "  max_angular_velocity: %.2f rad/s", max_angular_velocity_);
         RCLCPP_INFO(this->get_logger(), "  min_distance: %.2f m", min_distance_);
         RCLCPP_INFO(this->get_logger(), "Rick will now chase Morty!");
     }
@@ -77,24 +75,10 @@ class RobotChase : public rclcpp::Node {
         }
 
         // Apply proportional control for linear velocity
-        double linear_velocity = kp_distance_ * error_distance;
-
-        // Clamp to maximum linear velocity
-        linear_velocity = std::min(linear_velocity, max_linear_velocity_);
-
-        cmd_vel.linear.x = linear_velocity;
+        cmd_vel.linear.x = kp_distance_ * error_distance;
 
         // Calculate angular velocity
-        double angular_velocity = kp_yaw_ * error_yaw;
-
-        // Clamp to maximum angular velocity (both positive and negative)
-        if (angular_velocity > max_angular_velocity_) {
-            angular_velocity = max_angular_velocity_;
-        } else if (angular_velocity < -max_angular_velocity_) {
-            angular_velocity = -max_angular_velocity_;
-        }
-
-        cmd_vel.angular.z = angular_velocity;
+        cmd_vel.angular.z = kp_yaw_ * error_yaw;
 
         // Publish velocity command
         velocity_publisher_->publish(cmd_vel);
@@ -113,8 +97,6 @@ class RobotChase : public rclcpp::Node {
 
     const double kp_distance_ = 0.5;
     const double kp_yaw_ = 1.0;
-    const double max_linear_velocity_ = 0.5;
-    const double max_angular_velocity_ = 1.0;
     const double min_distance_ = 0.356 * 1.01;
 };
 
