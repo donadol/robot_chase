@@ -115,7 +115,7 @@ class RobotChase : public rclcpp::Node {
     const double kp_yaw_ = 1.0;
     const double max_linear_velocity_ = 0.5;
     const double max_angular_velocity_ = 1.0;
-    const double min_distance_ = 0.356 * 1.1;  // double than robot diameter
+    const double min_distance_ = 0.356 * 1.01;
 };
 
 int main(int argc, char* argv[]) {
